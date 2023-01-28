@@ -2,7 +2,7 @@ const fs = require("fs");
 
 const http = require("http");
 
-const user = [
+let users = [
   { id: 1, name: "Win", email: "win@gmail.com", password: "hey" },
   { id: 2, name: "min", email: "min@gmail.com", password: "hey2" },
   { id: 3, name: "aung", email: "aung@gmail.com", password: "hey3" },
@@ -29,16 +29,62 @@ const server = http.createServer((req, res) => {
       });
       req.on("end", () => {
         console.log(data);
-        user.push({ ...JSON.parse(data), id: user.length + 1 });
+        users.push({ ...JSON.parse(data), id: users.length + 1 });
         res.writeHead(200, { "Content-Type": "application/json" });
         res.write(JSON.stringify({ status: "success" }));
         return res.end();
       });
-    } else {
+    } else if (req.method === "GET") {
       res.writeHead(200, { "Content-Type": "application/json" });
-      res.write(JSON.stringify(user));
+      res.write(JSON.stringify(users));
+      return res.end();
+    } else if (req.method === "PUT") {
+      ///////////// PUT //////////////////
+      let data = "";
+      req.on("data", (chunk) => {
+        data += chunk;
+      });
+      req.on("end", () => {
+        data = JSON.parse(data);
+        console.log(data);
+
+        const foundUser = users.find(
+          (user) => user.id === Number.parseInt(data.id)
+        );
+
+        if (foundUser) {
+          foundUser.name = data.name;
+          foundUser.email = data.email;
+          foundUser.password = data.password;
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.write(JSON.stringify({ status: "success" }));
+          return res.end();
+        } else {
+          res.writeHead(404, { "Content-Type": "application/json" });
+          res.write(JSON.stringify({ status: "fail" }));
+          return res.end();
+        }
+      });
+    } else if (req.method === "DELETE") {
+      let data = "";
+      req.on("data", (chunk) => {
+        data += chunk;
+      });
+      req.on("end", () => {
+        res.writeHead(200, { "Content-Type": "application/json" });
+        data = JSON.parse(data);
+        users = users.filter((user) => user.id !== Number.parseInt(data.id));
+        res.write(JSON.stringify({ status: "success" }));
+        return res.end();
+      });
+    } else {
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.write(JSON.stringify({ status: "nope I only accept GET & POST" }));
       return res.end();
     }
+  } else {
+    res.writeHead(404);
+    return res.end();
   }
 });
 
