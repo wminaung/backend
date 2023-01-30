@@ -12,14 +12,16 @@ const showUserData = () => {
       userData.innerHTML = "";
       data.forEach((user) => {
         userData.innerHTML += `
-        <div class="card bg-light col-4 my-2 " >
+        <div class="card bg-light col-3 m-1 my-2 " >
         <div class="card-body" >
-<pre>
-  id: ${user.id}
-  name: ${user.name};
-  email: ${user.email}:
-  password: ${user.password}
-</pre>
+
+        <div>  id : ${user.id};</div>
+        <div> name : ${user.name};</div>
+        <div> email : ${user.email};</div>
+        <div> password : ${user.password};</div>
+        <div> createAt : ${user.createdAt};</div>
+        <div> updatedAt : ${user.updatedAt};</div>
+
 <div>
         <button type="button" data-name=${user.name} data-email=${user.email} data-password=${user.password} data-id=${user.id} data-bs-toggle="modal" data-bs-target="#editModal"  class="btn btn-primary edit"> Edit </button>
         <button type="button" onclick="deleteUser('${user.id}')" class="btn btn-danger delete"> Delete </button>
@@ -48,7 +50,7 @@ const showUserData = () => {
           const myModal = document.getElementById("editModal");
           const modal = bootstrap.Modal.getOrCreateInstance(myModal);
           modal.hide();
-          await showUserData();
+          showUserData();
         }
       };
 
@@ -119,8 +121,24 @@ const deleteUser = async (deleteId) => {
     body: JSON.stringify({ id: deleteId }),
   });
 
-  const data = await serverResponse.json();
-  if (data.status === "success") {
+  const { status } = await serverResponse.json();
+  if (status === "success") {
     showUserData();
   }
+};
+
+////////////// Write File //////////////////
+
+const handleFileUpload = async () => {
+  const fileInput = document.getElementById("file");
+
+  // console.log(fileInput.files[0]);
+  const fileUploadUrl = "http://localhost:3000/fileUpload";
+  const response = await fetch(fileUploadUrl, {
+    method: "POST",
+    body: fileInput.files[0],
+  });
+
+  const message = await response.json();
+  console.log(message);
 };
