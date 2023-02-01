@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "event.js",
+  "engines": {
+    "node": "14.x"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -17,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/wminaung/backend/issues"
   },
-  "homepage": "https://github.com/wminaung/backend#readme"
+  "homepage": "https://github.com/wminaung/backend#readme",
+  "dependencies": {
+    "nodemon": "^2.0.20"
+  }
 }
